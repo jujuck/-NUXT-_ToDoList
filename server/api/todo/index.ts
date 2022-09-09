@@ -1,12 +1,12 @@
-import { v4 as uuid} from 'uuid';
-import db from '../../db';
+import { PrismaClient } from "@prisma/client";
 import { createError, sendError} from "h3";
 
+const prisma = new PrismaClient();
 export default defineEventHandler(async(event) => {
   const { method } = event.req;
   if (method === "GET") {
-    const res = await db.query('select * from todolist');
-    return res[0]
+    const res = await prisma.todolist.findMany()
+    return res
   }
   if (method === "POST") {
     const body = await useBody(event);
@@ -19,13 +19,13 @@ export default defineEventHandler(async(event) => {
       sendError(event, notFoundError)
     };
 
-    console.log(body.item)
-    const res = await db.query('INSERT INTO todolist (item, completed) VALUES (?, ?)', [body.item, false]);
-    console.log(res)
-    return {
-      id: res[0].insertId,
-      item: body.item,
-      completed: false
-    };
+    const res = await prisma.todolist.create({
+      data: {
+        item: body.item,
+        completed: 0
+      }
+    })
+
+    return res
   }
 });

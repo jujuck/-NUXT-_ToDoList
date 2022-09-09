@@ -1,5 +1,7 @@
-import db from '../../db';
+import { PrismaClient } from "@prisma/client";
 import { createError, sendError} from "h3";
+
+const prisma = new PrismaClient();
 
 export default defineEventHandler(async(event) => {
   const { method } = event.req;
@@ -15,13 +17,22 @@ export default defineEventHandler(async(event) => {
     //   })
     //   sendError(event, notFoundError)
     // };
-    const res = await db.query('UPDATE todolist SET completed = true WHERE id = ?', [id]);
-    console.log(res)
+   await prisma.todolist.update({
+      where: {
+        id: parseInt(id, 10)
+      },
+      data: { completed: 1}
+    })
+
     return {messsage: 'To do updated correctly'};
   }
   if (method === "DELETE") {
-    const res = await db.query('DELETE FROM todolist WHERE id = ?', [id])
-    console.log(res)
+   await prisma.todolist.delete({
+      where: {
+        id: parseInt(id, 10)
+      }
+    })
+
     return { message: 'Item deleted successfully'}
   }
 });

@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@nuxt/ui": "^0.3.2",
+    "@prisma/client": "^4.3.1",
     "dotenv": "^16.0.2",
     "mysql2": "^2.3.3",
+    "prisma": "^4.3.1",
     "uuid": "^9.0.0"
   }
 }
